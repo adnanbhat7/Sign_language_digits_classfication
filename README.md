@@ -1,7 +1,8 @@
 # Hand Sign Classification with MobileNet and SVM
 
 This project is a hand sign classifier that leverages MobileNet for feature extraction and an SVM (Support Vector Machine) for classification. The combined approach allows for efficient feature extraction with high accuracy, achieving a remarkable 98% accuracy on the test set.
-
+# Accsess the model here : [Hand Signs Digits Classifier](https://signdigitsclassfication.streamlit.app/) 
+Disclamer its little slow :(
 ## Motivation
 
 The choice to use a combination of MobileNet and SVM was motivated by the need for an efficient and accurate model:
