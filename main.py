@@ -1,10 +1,12 @@
 import os
 import numpy as np
 import tensorflow as tf
-from tensorflow.keras.preprocessing.image import ImageDataGenerator
-from tensorflow.keras.models import Model
+import requests
+from PIL import Image
+from io import BytesIO
+import joblib
 from tensorflow.keras.layers import Dense , Flatten
-from tensorflow.keras.preprocessing.image import load_img, img_to_array, save_img
+from tensorflow.keras.preprocessing.image import ImageDataGenerator, load_img, img_to_array, save_img
 from tensorflow.keras.applications import MobileNet
 from sklearn.svm import SVC
 from sklearn.metrics import confusion_matrix, classification_report, ConfusionMatrixDisplay
@@ -55,7 +57,8 @@ train_path = f'{path}/train'
 valid_path = f'{path}/valid'
 test_path = f'{path}/test'
 
-# Prepare Data Generators/
+# Prepare Data Generators
+
 train_batches = ImageDataGenerator(
     preprocessing_function=tf.keras.applications.mobilenet.preprocess_input,
     rotation_range=20,         # Random rotation between 0 and 20 degrees
@@ -115,13 +118,10 @@ ConfusionMatrixDisplay(confusion_matrix=test_cm, display_labels=cm_plot_labels).
 print("Test Set Classification Report:")
 print(classification_report(test_labels, test_predicted_labels, target_names=cm_plot_labels))
 
+#saving models 
 # Save MobileNet feature extractor model in Keras format
 feature_extractor.save("/content/drive/MyDrive/mobilenet_feature_extractor.keras")
-
-import joblib
-# Save the trained SVM model
 joblib.dump(svm_classifier, "/content/drive/MyDrive/svm_classifier.pkl")
-# Save the scaler to a file
 joblib.dump(scaler, '/content/drive/MyDrive/scaler.pkl')
 
 
@@ -133,11 +133,7 @@ feature_extractor = load_model("/content/drive/MyDrive/mobilenet_feature_extract
 svm_classifier = joblib.load("/content/drive/MyDrive/svm_classifier.pkl")
 scaler = joblib.load("/content/drive/MyDrive/scaler.pkl")
 
-import requests
-from PIL import Image
-from io import BytesIO
 from tensorflow.keras.applications.mobilenet import preprocess_input
-from tensorflow.keras.preprocessing.image import img_to_array
 
 # Load and preprocess the image from a URL
 def load_and_preprocess_image_from_url(img_url):
@@ -149,7 +145,7 @@ def load_and_preprocess_image_from_url(img_url):
     return img_array
 
 # URL of the image
-img_url = 'https://c8.alamy.com/comp/W5AD08/person-hand-showing-four-fingers-W5AD08.jpg'  # Replace with your image URL# Preprocess the image
+img_url = 'https://c8.alamy.com/comp/W5AD08/person-hand-showing-four-fingers-W5AD08.jpg'  # Replace with your image URL
 img_array = load_and_preprocess_image_from_url(img_url)
 
 # Extract features from the image array
