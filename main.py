@@ -72,25 +72,29 @@ valid_batches = ImageDataGenerator(preprocessing_function=tf.keras.applications.
 test_batches = ImageDataGenerator(preprocessing_function=tf.keras.applications.mobilenet.preprocess_input).flow_from_directory(
     directory=test_path, target_size=(224, 224), batch_size=10, shuffle=False)
 
-# Extract Features for Training, Validation, and Test Sets
+# Extract Features for Training  Set
 train_features = feature_extractor.predict(train_batches, verbose=1)
 train_labels = train_batches.classes
 
+
+# Scale Features
+scaler = StandardScaler()
+train_features = scaler.fit_transform(train_features)
+
+# Train SVM
+svm_classifier = SVC(kernel='linear', C = 0.5, probability=True)
+svm_classifier.fit(train_features, train_labels)
+
+# Extract Features for  Validation, and Test Sets
 valid_features = feature_extractor.predict(valid_batches, verbose=1)
 valid_labels = valid_batches.classes
 
 test_features = feature_extractor.predict(test_batches, verbose=1)
 test_labels = test_batches.classes
 
-# Scale Features
-scaler = StandardScaler()
-train_features = scaler.fit_transform(train_features)
+# scaling test and valid
 valid_features = scaler.transform(valid_features)
 test_features = scaler.transform(test_features)
-
-# Train SVM
-svm_classifier = SVC(kernel='linear', C = 0.5, probability=True)
-svm_classifier.fit(train_features, train_labels)
 
 # Evaluate on Validation Set
 val_predicted_labels = svm_classifier.predict(valid_features)
